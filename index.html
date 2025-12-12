@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>رسالة دعم + QR</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: "Cairo", sans-serif;
+        background: linear-gradient(120deg, #111, #222, #111);
+        color: white;
+        text-align: center;
+        overflow-x: hidden;
+    }
+
+    /* خلفية متحركة */
+    .bg-animation {
+        position: fixed;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,0,0,0.15), transparent 60%);
+        animation: move 10s infinite linear;
+        top: -50%;
+        left: -50%;
+        z-index: -1;
+    }
+
+    @keyframes move {
+        0% { transform: translate(0,0);}
+        50% { transform: translate(20%,20%);}
+        100% { transform: translate(0,0);}
+    }
+
+    .container {
+        padding: 40px;
+        max-width: 500px;
+        margin: auto;
+    }
+
+    input, button {
+        width: 90%;
+        padding: 14px;
+        margin-top: 15px;
+        border-radius: 12px;
+        border: none;
+        font-size: 18px;
+        outline: none;
+    }
+
+    input {
+        background: #ffffffdd;
+    }
+
+    button {
+        background: crimson;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #ff1e4d;
+    }
+
+    #supportBox {
+        margin-top: 25px;
+        padding: 20px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(6px);
+        line-height: 2;
+        display: none;
+    }
+
+    #qrPage {
+        display: none;
+    }
+
+    #qrImage {
+        margin-top: 25px;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="bg-animation"></div>
+
+<div id="namePage" class="container">
+    <h1>أهلاً بك ❤️</h1>
+    <p>من فضلك أدخل اسمك:</p>
+
+    <input type="text" id="username" placeholder="اكتب اسمك هنا">
+
+    <button onclick="showSupport()">عرض رسالة الدعم</button>
+
+    <div id="supportBox"></div>
+
+    <button id="continueBtn" style="display:none;" onclick="gotoQR()">تابع ➤</button>
+</div>
+
+
+<div id="qrPage" class="container">
+    <h2>🔗 إنشاء QR من لينك</h2>
+
+    <input type="text" id="userLink" placeholder="ضع اللينك هنا">
+
+    <button onclick="makeQR()">إنشاء QR</button>
+
+    <div id="qrImage"></div>
+    <a id="downloadQR" download="qr.png" style="display:none;">
+        <button>تحميل الصورة</button>
+    </a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+<script>
+
+function showSupport() {
+    const name = document.getElementById("username").value.trim();
+    const box = document.getElementById("supportBox");
+    const btn = document.getElementById("continueBtn");
+
+    if (name === "") {
+        alert("من فضلك أدخل اسمك أولاً");
+        return;
+    }
+
+    // رسالة دعم طويلة باسم المستخدم
+    box.innerHTML = `
+        <h2>💌 رسالة دعم خاصة لك يا ${name} ❤️</h2>
+        <p>
+        أحب أقولك إنك شخص قوي، وقادر تتخطى أي تحدي يمر عليك.  
+        كل خطوة بتاخدها—even لو كانت صغيرة—بتقربك لحلمك.  
+        إوعى تستهين بقيمتك… لأنك أثمن بكتير مما تتخيل.  
+        خليك دايمًا ثابت، واثق، ومؤمن إن بكرة أحلى…  
+        ودايمًا افتكر إن في حد بيدعمك وبيقولك:  
+        <br><strong>إنت قدها يا ${name}… وهتوصل بإذن الله ❤️🔥</strong>
+        </p>
+    `;
+
+    box.style.display = "block";
+    btn.style.display = "inline-block";
+}
+
+function gotoQR() {
+    document.getElementById("namePage").style.display = "none";
+    document.getElementById("qrPage").style.display = "block";
+}
+
+function makeQR() {
+    const link = document.getElementById("userLink").value.trim();
+
+    if (link === "") {
+        alert("الرجاء إدخال لينك صحيح");
+        return;
+    }
+
+    const qrDiv = document.getElementById("qrImage");
+    qrDiv.innerHTML = "";
+
+    QRCode.toDataURL(link, { width: 300 }, function(err, url) {
+        if (err) return;
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.style.width = "250px";
+
+        qrDiv.appendChild(img);
+
+        const download = document.getElementById("downloadQR");
+        download.href = url;  
+        download.style.display = "block";
+    });
+}
+
+</script>
+
+</body>
+</html>
